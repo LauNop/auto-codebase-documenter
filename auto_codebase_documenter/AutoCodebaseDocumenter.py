@@ -13,23 +13,24 @@ class AutoCodebaseDocumenter:
         root_path=".",
         output_docs_folder_name="docs",
         ignore_folders=["venv"],
+        ignore_gitignore_files='.gitignore',
         file_types=[".py"],
         single_file=False,
         skip_existing=False,
         debug=False,
         gpt_model="gpt-3.5-turbo",
     ):
-        self.openai_api_key = openai_api_key
         self.root_path = root_path
         self.output_docs_folder_name = output_docs_folder_name
         self.ignore_folders = ignore_folders
+        self.ignore_gitignore_files = ignore_gitignore_files
         self.file_types = file_types
         self.skip_existing = skip_existing
         self.gpt_model = gpt_model
 
         self.docs_dir = os.path.join(self.root_path, self.output_docs_folder_name)
 
-        openai.api_key = self.openai_api_key
+        openai.api_key = openai_api_key
 
         # Create the docs folder if it doesn't exist
         if not os.path.exists(self.docs_dir):

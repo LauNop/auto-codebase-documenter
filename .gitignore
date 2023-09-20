@@ -1,7 +1,7 @@
 # Ignore Python virtual environment and environment variable files
 venv/
 .env
-
+.idea/
 # Ignore Python's cache files which stores intermediate byte code files
 __pycache__/
 *.pyc
