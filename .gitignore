@@ -2,3 +2,6 @@ venv
 env
 __pycache__
 .idea
+build/
+dist/
+my_auto_codebase_documenter.egg-info/
