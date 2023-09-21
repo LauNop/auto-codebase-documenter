@@ -8,8 +8,11 @@ ignore_folders:
 is_ignore_gitignore: True
 file_types:
   - ".py"
-unwanted_files: None
+unwanted_files:
+  - "setup.py"
+  - "documenter.py"
+  - "format_code.py"
+  - "__init__.py"
 skip_existing: False
-gpt_model: "gpt-3.5-turbo"
-language: "en"
-    
+gpt_model: "gpt-4"
+language: "fr"

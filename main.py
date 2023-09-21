@@ -59,5 +59,5 @@ if __name__ == "__main__":
     #     print(file)
     #     print(os.path.splitext(file))
     # print(len(files))
-    # main()
-    create_documenter_config()
+    main()
+    # create_documenter_config()
