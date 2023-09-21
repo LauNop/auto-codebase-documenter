@@ -12,7 +12,7 @@ class AutoCodebaseDocumenter:
         root_path=".",
         output_docs_folder_name="docs",
         ignore_folders=["venv",".git","tests"],
-        is_ignore_gitignore = True,
+        is_ignore_gitignore=True,
         file_types=[".py"],
         unwanted_files=None,
         skip_existing=False,
@@ -76,7 +76,7 @@ class AutoCodebaseDocumenter:
         if self.ignore_folders:
             ignore_patterns.update(self.ignore_folders)
 
-        print(ignore_patterns)
+        print("Ignore folder:", ignore_patterns)
         # Walk through the root directory and its subdirectories
         count = 0
         for dirpath, dirnames, filenames in os.walk(self.root_path):
@@ -157,6 +157,7 @@ class AutoCodebaseDocumenter:
     def process_all_files(self):
         file_paths = self._get_file_paths()
         total_files = len(file_paths)
+        print("Files:",total_files,"\n",file_paths)
         for i, file_path in enumerate(file_paths):
             print(f"Processing file {i+1}/{total_files}: {file_path}")
             success, message = self._process_file(file_path)

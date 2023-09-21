@@ -1,5 +1,5 @@
 import os
-import fnmatch
+from my_auto_codebase_documenter import main
 
 
 def forward_slash_to_backslash(input_string):
@@ -49,13 +49,14 @@ def get_files(root_dir, ignore_list=[], unwanted_file=[]):
 
 # Usage example:
 if __name__ == "__main__":
-    root_directory = "."
-    additional_ignore_patterns = ["tests", ".git"]  # Add any additional patterns to ignore
-    unwanted_file = ["setup.py", "__init__.py"]
-    files = get_files(root_directory, additional_ignore_patterns,unwanted_file)
-
-    # Print the list of files
-    for file in files:
-        print(file)
-        print(os.path.splitext(file))
-    print(len(files))
+    # root_directory = "."
+    # additional_ignore_patterns = ["tests", ".git"]  # Add any additional patterns to ignore
+    # unwanted_file = ["setup.py", "__init__.py"]
+    # files = get_files(root_directory, additional_ignore_patterns,unwanted_file)
+#
+    # # Print the list of files
+    # for file in files:
+    #     print(file)
+    #     print(os.path.splitext(file))
+    # print(len(files))
+    main()
