@@ -8,6 +8,7 @@ setup(
     entry_points={
         "console_scripts": [
             "auto-codebase-documenter = my_auto_codebase_documenter.auto_documenter:main",
+            "create_config = my_auto_codebase_documenter.auto_documenter:create_documenter_config"
         ],
     },
     author="Laurent Nopoly",
