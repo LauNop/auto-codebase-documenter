@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="my-auto-codebase-documenter",
-    version="1.0",
+    version="1.0.1",
     packages=["my_auto_codebase_documenter"],
     install_requires=["openai", "python-dotenv", "PyYAML"],
     entry_points={

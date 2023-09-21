@@ -70,7 +70,7 @@ class AutoCodebaseDocumenter:
                 for line in gitignore_file:
                     line = line.strip()
                     if line and not line.startswith("#"):  # Ignore comments and empty lines
-                        ignore_patterns.add(line)
+                        ignore_patterns.add(os.path.basename(line))
 
         # If additional ignore patterns are provided, add them to the set
         if self.ignore_folders:
