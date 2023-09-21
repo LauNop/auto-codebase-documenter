@@ -17,6 +17,7 @@ class AutoCodebaseDocumenter:
         unwanted_files=None,
         skip_existing=False,
         gpt_model="gpt-3.5-turbo",
+        language='en',
     ):
         self.root_path = root_path
         self.output_docs_folder_name = output_docs_folder_name
@@ -28,6 +29,9 @@ class AutoCodebaseDocumenter:
         self.gpt_model = gpt_model
 
         self.docs_dir = os.path.join(self.root_path, self.output_docs_folder_name)
+        if language == 'fr':
+            default_ai_prompt.insert(0, 'Write in french')
+
         self.system_message = '. '.join(default_ai_prompt)
 
         openai.api_key = openai_api_key
@@ -126,7 +130,7 @@ class AutoCodebaseDocumenter:
             with open(output_file, "w") as output:
                 # Add timestamp at the top of the file
                 print(
-                    "# Auto generated documentation file from auto-codebase-documenter\n",
+                    os.path.basename(file_path),
                     file=output,
                 )
                 timestamp = datetime.now().strftime("%d %B %Y at %H:%M:%S")
