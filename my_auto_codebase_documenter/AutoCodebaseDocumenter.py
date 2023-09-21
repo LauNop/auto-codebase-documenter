@@ -1,103 +1,48 @@
 from datetime import datetime
 import os
-import yaml
 import openai
-import logging
-from auto_codebase_documenter.default_ai_prompt import default_ai_prompt
+from my_auto_codebase_documenter.default_ai_prompt import default_ai_prompt
 
 
 class AutoCodebaseDocumenter:
     def __init__(
         self,
+        openai_org_id,
         openai_api_key,
         root_path=".",
         output_docs_folder_name="docs",
-        ignore_folders=["venv"],
-        ignore_gitignore_files='.gitignore',
+        ignore_folders=["venv",".git","tests"],
+        is_ignore_gitignore = True,
         file_types=[".py"],
-        single_file=False,
+        unwanted_files=None,
         skip_existing=False,
-        debug=False,
         gpt_model="gpt-3.5-turbo",
     ):
         self.root_path = root_path
         self.output_docs_folder_name = output_docs_folder_name
         self.ignore_folders = ignore_folders
-        self.ignore_gitignore_files = ignore_gitignore_files
+        self.is_ignore_gitignore = is_ignore_gitignore
         self.file_types = file_types
+        self.unwanted_files = unwanted_files
         self.skip_existing = skip_existing
         self.gpt_model = gpt_model
 
         self.docs_dir = os.path.join(self.root_path, self.output_docs_folder_name)
+        self.system_message = '. '.join(default_ai_prompt)
 
         openai.api_key = openai_api_key
+        openai.organization = openai_org_id
 
         # Create the docs folder if it doesn't exist
         if not os.path.exists(self.docs_dir):
             os.makedirs(self.docs_dir)
 
-        # Set up logging
-        self.debug = debug
-        self._setup_logging()
-
-        # Load config from file
-        self._load_config()
 
     def _get_completion(self, prompt):
-        return self._openai_chat_completion_create(prompt)
-
-    def _openai_chat_completion_create(self, prompt):
-        # This is where you actually call the openai API
-        response = openai.ChatCompletion.create(
-            model="text-davinci-002",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt},
-            ],
-        )
-        return response.choices[0].message["content"]
-
-    def _setup_logging(self):
-        log_level = logging.DEBUG if self.debug else logging.INFO
-        logging.basicConfig(level=log_level)
-
-    def _load_config(self):
-        config_file = os.path.join(os.getcwd(), "documenter_config.yaml")
-        logging.debug(f"Looking for config file at {config_file}")
-
-        try:
-            with open(config_file, "r") as stream:
-                config_data = yaml.safe_load(stream)
-                self.ai_prompt_text = config_data.get(
-                    "override_ai_prompt", default_ai_prompt
-                )
-                self.ignore_folders = config_data.get(
-                    "ignore_folders", self.ignore_folders
-                )
-                self.file_types = config_data.get("file_types", self.file_types)
-                logging.debug(
-                    "Using the prompt override from 'documenter_config.yaml'."
-                )
-                logging.debug("Custom prompt is set to the following:")
-                logging.debug(self.ai_prompt_text)
-        except FileNotFoundError:
-            logging.warning(
-                "'documenter_config.yaml' file not found. Using default AI prompt config."
-            )
-            self.ai_prompt_text = default_ai_prompt
-        except KeyError:
-            logging.warning(
-                "'override_ai_prompt' key not found in 'documenter_config.yaml'. Using default AI prompt config."
-            )
-            self.ai_prompt_text = default_ai_prompt
-        except Exception as e:
-            logging.warning(
-                f"Error reading 'documenter_config.yaml'. Using default AI prompt config. Error: {str(e)}"
-            )
-            self.ai_prompt_text = default_ai_prompt
-
-    def _get_completion(self, prompt):
-        messages = [{"role": "user", "content": prompt}]
+        messages = [
+            {"role": "system", "content": self.system_message},
+            {"role": "user", "content": prompt}
+        ]
         response = openai.ChatCompletion.create(
             model=self.gpt_model,
             messages=messages,
@@ -106,21 +51,43 @@ class AutoCodebaseDocumenter:
         return response.choices[0].message["content"]
 
     def _get_file_paths(self):
-        file_paths = []
+        # Initialize a list to store the file paths
+        if self.unwanted_files is None:
+            unwanted_file = []
+        file_list = []
+
+        # Create a set to store the patterns from .gitignore
+        ignore_patterns = set()
+
+        # Check if a .gitignore file exists and add its patterns to the set
+        gitignore_path = os.path.join(self.root_path, ".gitignore")
+        if os.path.exists(gitignore_path):
+            with open(gitignore_path, "r") as gitignore_file:
+                for line in gitignore_file:
+                    line = line.strip()
+                    if line and not line.startswith("#"):  # Ignore comments and empty lines
+                        ignore_patterns.add(line)
+
+        # If additional ignore patterns are provided, add them to the set
+        if self.ignore_folders:
+            ignore_patterns.update(self.ignore_folders)
+
+        print(ignore_patterns)
+        # Walk through the root directory and its subdirectories
+        count = 0
         for dirpath, dirnames, filenames in os.walk(self.root_path):
-            for ignore_folder in self.ignore_folders:
-                if ignore_folder in dirnames:
-                    dirnames.remove(ignore_folder)
-            file_paths.extend(
+            for ignore_pattern in ignore_patterns:
+                if ignore_pattern in dirnames:
+                    dirnames.remove(ignore_pattern)
+            file_list.extend(
                 [
                     os.path.join(dirpath, filename)
                     for filename in filenames
-                    if any(
-                        filename.endswith(file_type) for file_type in self.file_types
-                    )
+                    if any(filename.endswith(file_type) for file_type in [".py"])
+                       and filename not in self.unwanted_files
                 ]
             )
-        return file_paths
+        return file_list
 
     def _process_file(self, file_path):
         with open(file_path, "r") as file:
@@ -129,8 +96,7 @@ class AutoCodebaseDocumenter:
             if not prompt.strip():
                 return False, "Skipping empty file"
 
-            prompt = f"""{'. '.join(self.ai_prompt_text)}.
-
+            prompt = f"""
             Please assess the following file:
 
             {prompt}
@@ -144,7 +110,7 @@ class AutoCodebaseDocumenter:
             os.makedirs(output_dir, exist_ok=True)
 
             # Define the output file path
-            file_name = os.path.basename(file_path)
+            file_name, _ = os.path.splitext(os.path.basename(file_path))
             output_file = os.path.join(output_dir, f"{file_name}.md")
 
             # Check if the file already exists

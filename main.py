@@ -57,4 +57,5 @@ if __name__ == "__main__":
     # Print the list of files
     for file in files:
         print(file)
+        print(os.path.splitext(file))
     print(len(files))

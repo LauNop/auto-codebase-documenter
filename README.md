@@ -66,7 +66,7 @@ The easiest way to use the tool is to create a file called `documenter.py` and a
 ```python
 import os
 from dotenv import load_dotenv
-from auto_codebase_documenter.AutoCodebaseDocumenter import AutoCodebaseDocumenter
+from my_auto_codebase_documenter.AutoCodebaseDocumenter import AutoCodebaseDocumenter
 
 load_dotenv()  # load .env file
 openai_api_key = os.getenv("OPENAI_KEY")  # get OPENAI_KEY value from .env file{}
@@ -147,14 +147,14 @@ E.g., for this codebase the output will look something like this:
 ```bash
 ├── LICENSE
 ├── README.md
-├── auto_codebase_documenter
+├── my_auto_codebase_documenter
 │   ├── AutoCodebaseDocumenter.py
 │   ├── __init__.py
 │   ├── auto_documenter.py
 │   └── default_ai_prompt.py
 ├── create_dist.sh
 ├── docs
-│   ├── auto_codebase_documenter
+│   ├── my_auto_codebase_documenter
 │   │   ├── AutoCodebaseDocumenter.py.md
 │   │   ├── auto_documenter.py.md
 │   │   └── default_ai_prompt.py.md

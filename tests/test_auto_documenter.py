@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, Mock, mock_open
-from auto_codebase_documenter.auto_documenter import AutoCodebaseDocumenter
+from my_auto_codebase_documenter.auto_documenter import AutoCodebaseDocumenter
 
 
 class TestAutoCodebaseDocumenter(unittest.TestCase):

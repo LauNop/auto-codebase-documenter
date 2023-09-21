@@ -2,7 +2,7 @@ import os
 import argparse
 import yaml
 from dotenv import load_dotenv
-from auto_codebase_documenter.AutoCodebaseDocumenter import AutoCodebaseDocumenter
+from my_auto_codebase_documenter.AutoCodebaseDocumenter import AutoCodebaseDocumenter
 
 
 def load_config():
