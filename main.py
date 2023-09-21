@@ -1,5 +1,5 @@
 import os
-from my_auto_codebase_documenter import main
+from my_auto_codebase_documenter import main, create_documenter_config
 
 
 def forward_slash_to_backslash(input_string):
@@ -59,4 +59,5 @@ if __name__ == "__main__":
     #     print(file)
     #     print(os.path.splitext(file))
     # print(len(files))
-    main()
+    # main()
+    create_documenter_config()

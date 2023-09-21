@@ -139,6 +139,35 @@ def main():
         language
     )
 
+def create_documenter_config():
+    # Define the filenames
+    root_file_name = "documenter_config.yaml"
+    block_to_write = """codebase_path: "."
+output_docs_folder_name: "docs"
+ignore_folders:
+  - "venv"
+  - "temp"
+  - ".git"
+  - "tests"
+is_ignore_gitignore: True
+file_types:
+  - ".py"
+unwanted_files: None
+skip_existing: False
+gpt_model: "gpt-3.5-turbo"
+language: "en"
+    """
+
+    # Check if the root file exists
+    if not os.path.exists(root_file_name):
+        # If it doesn't exist, create it
+        # Copy the content of the source file into the root file
+        with open(root_file_name, 'w') as root_file:
+            root_file.write(block_to_write)
+        print(f"Content of {root_file_name} has been wrote.")
+    else:
+       print(f"The file {root_file_name} already exist")
+
 
 if __name__ == "__main__":
     main()
